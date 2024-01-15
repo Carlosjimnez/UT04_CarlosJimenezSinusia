@@ -1,3 +1,17 @@
+import {
+  CategoryAlreadyExistsError,
+  CategoryNotFoundError,
+  MenuAlreadyExistsError,
+  MenuNotFoundError,
+  AllergenAlreadyExistsError,
+  AllergenNotFoundError,
+  DishAlreadyExistsError,
+  DishNotFoundError,
+  RestaurantAlreadyExistsError,
+  RestaurantNotFoundError,
+  InvalidObjectError,
+} from "./exceptions.js";
+
 import { Allergen } from "./allergen.js";
 import { Menu } from "./menu.js";
 import { Dish } from "./dish.js";
