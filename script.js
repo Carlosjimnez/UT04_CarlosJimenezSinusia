@@ -87,8 +87,12 @@ const RestaurantsManager = (function () {
     // Métodos para agregar y remover categorías, menús, alérgenos, platos y restaurantes
 
     addCategory(...categories) {
+      //Para la multiplicidad de argumentos
       categories.forEach((category) => {
+        //Comprobamos que un objeto Category o saltara Excepcion
         if (category instanceof Category) {
+          //Comprobamos que el elemento no este añadido
+          //con anterioridad , si no lo esta lo añade y si estara salta una Excepcion
           let indexCategory = this.getPositionCategories(category);
           if (indexCategory === -1) {
             this.categories.push(category);
@@ -101,7 +105,8 @@ const RestaurantsManager = (function () {
       });
       return this;
     }
-
+    //Misma comprobaciones que en el metodo add pero aqui eliminamos
+    // si encuentra el objeto y no lo encuentra salta Exception
     removeCategory(...categories) {
       categories.forEach((category) => {
         if (category instanceof Category) {
@@ -185,7 +190,8 @@ const RestaurantsManager = (function () {
       });
       return this;
     }
-
+    //Todos los emtodos add y remove anteriores son iguales pero cada uno sigue su categoria
+    // pero en este cuando añadimos un plato tambien añaadimos a ese plato category y allergens
     addDish(...dishes) {
       dishes.forEach((dish) => {
         if (dish instanceof Dish) {
@@ -259,7 +265,8 @@ const RestaurantsManager = (function () {
       });
       return this;
     }
-
+    //Metodo para asiganr una Categoria a un Plato, comprobamos que si no existe la categoria
+    //que la añada y luego incluimos la categoria al array
     assignCategoryToDish(dish, ...categories) {
       if (dish instanceof Dish) {
         let dishIndex = this.getPositionDishes(dish);
@@ -292,8 +299,8 @@ const RestaurantsManager = (function () {
         throw new InvalidObjectError();
       }
     }
-
-    deassignCategoryFromDish(dish, ...categories) {
+    //Eliminar la categoria un plato, buscamos la categoria y la eliminamos
+    deassignCategoryToDish(dish, ...categories) {
       if (dish instanceof Dish) {
         const dishIndex = this.getPositionDishes(dish);
         const assignedCategories = this.dishes[dishIndex]?.category;
@@ -317,7 +324,7 @@ const RestaurantsManager = (function () {
         throw new InvalidObjectError();
       }
     }
-
+    //Mismo metodos que añadir categoria pero con allergen
     assignAllergenToDish(dish, ...allergens) {
       if (dish instanceof Dish) {
         let dishIndex = this.getPositionDishes(dish);
@@ -376,7 +383,7 @@ const RestaurantsManager = (function () {
         throw new InvalidObjectError();
       }
     }
-
+    //Este es diferente porque es el plato el que lo añadimos a un menu
     assignDishToMenu(menu, ...dishes) {
       if (menu instanceof Menu) {
         // Verificar si el menú está registrado
@@ -439,6 +446,7 @@ const RestaurantsManager = (function () {
         throw new InvalidObjectError();
       }
     }
+    //Metodo para cambiar los platos de orden
 
     changeDishesPositionsInMenu(menu, dish1, dish2) {
       if (
@@ -620,6 +628,7 @@ const RestaurantsManager = (function () {
         return newRestaurant;
       }
     }
+    //Metodo toString para el testeo, aunque no era necesario
 
     toString() {
       const systemInfo = `System Name: ${this.systemName}\n`;
