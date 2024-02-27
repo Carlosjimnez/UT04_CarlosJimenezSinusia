@@ -1,88 +1,43 @@
-import { RestaurantsManager } from "./script.js";
+import { ManagerAplication } from "./managerAplication.js";
+const historyActions = {
+  // Inicialización de la aplicación
+  init: () => {
+    ManagerAplication.handleInit();
+  },
+  // Acción para mostrar un plato aleatorio
+  dishRandom: (event) => {
+    ManagerAplication.handleRandomList(event.state.dish);
+  },
+  // Acción para mostrar una lista de categorías
+  categoryList: (event) => {
+    ManagerAplication.handleCategoryList(event.state.category);
+  },
+  // Acción para mostrar una lista de alérgenos
+  allergenList: (event) => {
+    ManagerAplication.handleAllergenList(event.state.allergen);
+  },
+  // Acción para mostrar una lista de menús
+  menuList: (event) => {
+    ManagerAplication.handleMenuList(event.state.menu);
+  },
+  // Acción para mostrar un restaurante
+  restaurantList: (event) => {
+    ManagerAplication.handleShowRestaurant(event.state.restaurant);
+  },
+  // Acción para mostrar detalles de un plato
+  showDish: (event) => {
+    ManagerAplication.handleShowDish(event.state.dish);
+  },
+};
 
-function runTests() {
-  const manager = RestaurantsManager.getInstance();
-
-  const category = manager.createCategory("Pasta", "Category Principal");
-  const category1 = manager.createCategory("Platos Frios", "Descripcion1");
-  manager.addCategory(category);
-  manager.addCategory(category1);
-  console.log(manager.toString());
-  manager.removeCategory(category);
-  console.log(manager.toString());
-
-  const dish = manager.createDish(
-    "Macarrones",
-    "Macarrones con Tomate",
-    "Tomate, Pasta, Oregano",
-    "dish.jpg"
-  );
-  const dish1 = manager.createDish(
-    "Ensalada",
-    "Descripcion 1.1",
-    "Ingredientes 1.1",
-    "dish.jpg"
-  );
-  const dish2 = manager.createDish(
-    "Solomillo",
-    "Descripcion 2",
-    "Ingredientes 2",
-    "dish.jpg"
-  );
-  manager.addDish(dish);
-  manager.addDish(dish1);
-  console.log(manager.toString());
-
-  manager.assignCategoryToDish(dish, category);
-  console.log(manager.toString());
-  // manager.deassignCategoryToDish(category, dish);
-  // console.log(manager.toString());
-  const allergen = manager.createAllergen("Tomate", "Descripcion");
-  const allergen1 = manager.createAllergen("Oregano", "Descripcion");
-  manager.assignAllergenToDish(dish, allergen);
-  manager.assignAllergenToDish(dish, allergen1);
-  console.log(manager.toString());
-
-  manager.deassignAllergenToDish(dish, allergen);
-  console.log(manager.toString());
-
-  const menu = manager.createMenu("Menu Principal", "Descripcion del Menu");
-
-  manager.assignDishToMenu(menu, dish);
-  console.log(manager.toString());
-
-  manager.deassignDishToMenu(menu, dish);
-  console.log(manager.toString());
-
-  manager.assignDishToMenu(menu, dish);
-  manager.assignDishToMenu(menu, dish1);
-  manager.assignAllergenToDish(dish1, allergen1);
-  console.log(manager.toString());
-
-  manager.changeDishesPositionsInMenu(menu, dish1, dish);
-  console.log(manager.toString());
-  manager.assignDishToMenu(menu, dish2);
-  manager.changeDishesPositionsInMenu(menu, dish2, dish);
-  console.log(manager.toString());
-
-  const dishesInCategory = manager.getDishesInCategory(category);
-  console.log("Dishes en Category Principal:");
-  for (const dish of dishesInCategory) {
-    console.log(dish.getName());
+// Event listener para el evento popstate, que se dispara cuando cambia el historial de navegación
+window.addEventListener("popstate", (event) => {
+  // Verifica si hay un estado asociado al evento
+  if (event.state) {
+    // Ejecuta la acción correspondiente según el estado actual del historial
+    historyActions[event.state.action](event);
   }
-  const dishesWithAllergen = manager.getDishesWithAllergen(allergen1);
-  console.log("Dishes con Allergen1:");
-  for (const dish of dishesWithAllergen) {
-    console.log(dish.getName());
-  }
+});
 
-  const nameFilter = (dish) => dish.name.includes("Macarrones");
-  const resultado = manager.findDishes(nameFilter);
-  const resultArray = Array.from(resultado);
-  console.log(resultArray.toString());
-
-  console.log("Testeo correcto");
-}
-
-// Ejecutar pruebas
-runTests();
+// Reemplazamos el estado actual del historial con un objeto que contiene la acción "init"
+history.replaceState({ action: "init" }, null);
