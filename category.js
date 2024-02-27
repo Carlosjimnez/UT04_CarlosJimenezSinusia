@@ -1,8 +1,9 @@
 //Objeto Category
 class Category {
-  constructor(name, description) {
+  constructor(name, description, imagen) {
     this.name = name;
     this.description = description;
+    this.imagen = imagen;
   }
 
   // Métodos Getter y Setter
@@ -12,6 +13,13 @@ class Category {
 
   setName(name) {
     this.name = name;
+  }
+  getImagen() {
+    return this.imagen;
+  }
+
+  setImagen(imagen) {
+    this.imagen = imagen;
   }
 
   getDescription() {

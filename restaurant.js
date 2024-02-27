@@ -1,10 +1,11 @@
 import { Coordinate } from "./coordinate.js";
 
 class Restaurant {
-  constructor(name, description, location) {
+  constructor(name, description, location, image) {
     this.name = name;
     this.description = description;
     this.location = new Coordinate();
+    this.image = image;
   }
 
   // Métodos Getter y Setter
@@ -30,6 +31,13 @@ class Restaurant {
 
   setLocation(location) {
     this.location = location;
+  }
+  getImage() {
+    return this.image;
+  }
+
+  setImage(image) {
+    this.image = image;
   }
 
   // Método toString()

@@ -272,22 +272,34 @@ const RestaurantsManager = (function () {
         let dishIndex = this.getPositionDishes(dish);
 
         if (dishIndex === -1) {
+          // Si el plato no existe, lo agregamos al array de platos
           this.dishes.push({
             dish,
             category: [],
             allergens: [],
           });
+          dishIndex = this.getPositionDishes(dish); // Actualizamos el índice del plato
         }
 
         categories.forEach((category) => {
           if (category instanceof Category) {
             let indexCategory = this.getPositionCategories(category);
             if (indexCategory === -1) {
+              // Si la categoría no existe, la agregamos
               this.categories.push(category);
             }
 
-            if (!this.dishes[dishIndex].category.includes(category)) {
-              this.dishes[dishIndex].category.push(category);
+            // Verificamos si el objeto dish está definido y si tiene la propiedad category
+            if (this.dishes[dishIndex]?.category) {
+              // Agregamos la categoría al plato solo si no está presente
+              if (!this.dishes[dishIndex].category.includes(category)) {
+                this.dishes[dishIndex].category.push(category);
+              }
+            } else {
+              // Si el objeto dish o su propiedad category no están definidos, lanzamos una excepción
+              throw new Error(
+                "El objeto dish o su propiedad category no están definidos"
+              );
             }
           } else {
             throw new InvalidObjectError();
@@ -299,6 +311,7 @@ const RestaurantsManager = (function () {
         throw new InvalidObjectError();
       }
     }
+
     //Eliminar la categoria un plato, buscamos la categoria y la eliminamos
     deassignCategoryToDish(dish, ...categories) {
       if (dish instanceof Dish) {
@@ -390,19 +403,16 @@ const RestaurantsManager = (function () {
         let indexMenu = this.getPositionMenus(menu);
 
         if (indexMenu === -1) {
-          this.menus.push({
-            menu,
-            dish: [],
-          });
+          this.addMenu(menu);
           indexMenu = this.getPositionMenus(menu); // Obtener el nuevo índice después de agregar el menú
         }
 
-        const assignedDishes = this.menus[indexMenu]?.dish;
+        const assignedDishes = this.menus[indexMenu].dish;
 
         dishes.forEach((dish) => {
           if (dish instanceof Dish) {
             const dishIndex = assignedDishes.findIndex(
-              (assignedDish) => assignedDish === dish
+              (assignedDish) => assignedDish.name === dish.name
             );
 
             if (dishIndex === -1) {
@@ -545,6 +555,24 @@ const RestaurantsManager = (function () {
       }
     }
 
+    *getDishWithMenu(menu, orderFunct) {
+      if (!menu instanceof Menu) throw new InvalidObjectError();
+      const indexMenu = this.getPositionMenus(menu);
+      if (indexMenu === -1) throw new MenuNotFoundError();
+
+      let dishes;
+      if (orderFunct) {
+        dishes = [...this.menus[indexMenu].dish];
+        dishes.sort(orderFunct);
+      } else {
+        dishes = this.menus[indexMenu].dish;
+      }
+
+      for (const dish of dishes) {
+        yield dish;
+      }
+    }
+
     findDishes(callback, orderFunct) {
       if (typeof callback === "function") {
         // Obtener platos que cumplen con el criterio
@@ -580,10 +608,12 @@ const RestaurantsManager = (function () {
     }
 
     createMenu(name, description) {
-      const existingMenu = this.menus.find((menu) => menu.getName() === name);
+      const existingMenu = this.menus.find(
+        (menu) => menu.menu.getName() === name
+      );
 
       if (existingMenu) {
-        return existingMenu;
+        return existingMenu.menu;
       } else {
         const newMenu = new Menu(name, description);
         return newMenu;
@@ -628,6 +658,28 @@ const RestaurantsManager = (function () {
         return newRestaurant;
       }
     }
+
+    // Metodo para coger tres plato aleatorios del array de platos
+
+    getRandomDishes() {
+      // Creamos un array vacío donde guardaremos nuestros platos aleatorios
+      let arrayDishRandom = [];
+
+      // Obtenemos una copia de los platos disponibles
+      const dishes = Array.from(this.dishes);
+
+      while (arrayDishRandom.length !== 3) {
+        // Generamos un número aleatorio entre 0 y la longitud de la lista de platos - 1
+        const randomIndex = Math.floor(Math.random() * dishes.length);
+
+        // Añadimos el plato aleatorio al array de platos aleatorios si no está ya incluido
+        if (!arrayDishRandom.includes(dishes[randomIndex])) {
+          arrayDishRandom.push(dishes[randomIndex]);
+        }
+      }
+      return arrayDishRandom;
+    }
+
     //Metodo toString para el testeo, aunque no era necesario
 
     toString() {
@@ -695,4 +747,10 @@ const RestaurantsManager = (function () {
   };
 })();
 
-export { RestaurantsManager };
+export default RestaurantsManager;
+
+export { Allergen } from "./allergen.js";
+export { Menu } from "./menu.js";
+export { Dish } from "./dish.js";
+export { Restaurant } from "./restaurant.js";
+export { Category } from "./category.js";
