@@ -247,8 +247,18 @@ class ManagerController {
     this.onAddMenu();
     this.onAddRestaurant();
     this.onCloseFileWindow();
-
-    console.log(this[MODEL]);
+    this[VIEW].showAdminMenu();
+    this[VIEW].bindAdminMenu(
+      this.handleNewCategoryForm,
+      this.handleRemoveCategoryForm,
+      this.handleNewDishForm,
+      this.handleRemoveDishForm,
+      this.handleModifyMenu,
+      this.handleModifyMenuDesasig,
+      this.handleNewRestaurantForm,
+      this.handleAssingCategory,
+      this.handleDesasigCategory
+    );
   };
 
   // Con estos metodos se manejan acciones relacionadas con la adición de categorías, menus, alergenos y restaurantes
@@ -296,9 +306,6 @@ class ManagerController {
   //Manejadores para mostrar la visualizacion de los platos e unacategori especifica
   // Método para mostrar los detalles de un plato
   handleShowDish = (name) => {
-    const dish = this[MODEL].createDish(name);
-    console.log(dish);
-    // Mostrar los detalles del plato
     this[VIEW].showDish(name, this.handleShowFileDish);
   };
   // Método para manejar la lista de platos aleatorios
@@ -308,7 +315,9 @@ class ManagerController {
   };
   // Método para manejar la lista de categorías
   handleCategoryList = (name) => {
+    console.log(name);
     const category = this[MODEL].createCategory(name);
+    console.log(category);
 
     this[VIEW].listDishes(
       this[MODEL].getDishesInCategory(category),
@@ -342,6 +351,7 @@ class ManagerController {
   handleShowFileDish = (name, fileDishWindow) => {
     try {
       const dish = this[MODEL].createDish(name);
+      console.log(dish);
       // Mostrarmos los detalles del plato utilizando la vista
       this[VIEW].showFileDish(dish, fileDishWindow);
     } catch (error) {
@@ -359,6 +369,472 @@ class ManagerController {
     window.close();
     // Eliminamos el plato de la colección de ventanas de fichas
     this[VIEW].dishFileWindow.delete(dish);
+  };
+
+  handleNewCategoryForm = () => {
+    // Muestra el formulario para crear una nueva categoría y enlaza sus selecciones
+    this[VIEW].showNewCategoryForm();
+    this[VIEW].bindNewCategoryForm(this.handleCreateCategory);
+  };
+
+  handleCreateCategory = (name, url, desc) => {
+    // Crea una categoría o la devuelve si no esta creada
+    const category = this[MODEL].createCategory(name, desc);
+    category.setImagen(url);
+    let done;
+    let error;
+    console.log(category);
+    try {
+      // Agrega la categoría al modelo
+      this[MODEL].addCategory(category);
+      done = true;
+
+      // Añade la categoría al menu
+      this.onAddCategory();
+      console.log(this[MODEL]);
+      alert("Se ha añadido la categoría " + category.getName());
+    } catch (exception) {
+      // Si ocurre un error, marca la operación como no realizada y almacena el error
+      done = false;
+      error = exception;
+    }
+  };
+
+  handleRemoveCategoryForm = () => {
+    // Muestra el formulario para eliminar categorías y enlaza sus selecciones
+    this[VIEW].showRemoveCategoryForm(this[MODEL].categories);
+    this[VIEW].bindRemoveCategoryForm(this.handleRemoveCategory);
+  };
+
+  handleRemoveCategory = (name) => {
+    let done;
+    let error;
+    let cat;
+    try {
+      console.log("adios");
+
+      // Crea un objeto de categoría a partir del nombre
+      cat = this[MODEL].createCategory(name);
+      console.log("adios2");
+      console.log(this[MODEL]);
+
+      // Elimina la categoría del modelo
+      this[MODEL].removeCategory(cat);
+      console.log("adios3");
+      done = true;
+
+      this.onAddCategory();
+      this.handleRemoveCategoryForm();
+      alert("Se ha eliminado la categoría " + cat.getName());
+    } catch (exception) {
+      // Si ocurre un error, marca la operación como no realizada y almacena el error
+      done = false;
+      error = exception;
+    }
+  };
+
+  handleNewDishForm = () => {
+    // Muestra el formulario para crear un nuevo plato y enlaza sus selecciones
+    this[VIEW].showNewDishForm(this[MODEL].categories, this[MODEL].allergens);
+    this[VIEW].bindNewDishForm(this.handleCreateDish);
+  };
+
+  handleCreateDish = (name, desc, ingre, url, categories, allergens) => {
+    let done;
+    let error;
+    let dish;
+
+    try {
+      // Crea un plato con la información proporcionada
+      dish = this[MODEL].createDish(name, desc, ingre);
+      dish.setImage(url);
+
+      // Agrega el plato al modelo
+      this[MODEL].addDish(dish);
+
+      // Asigna las categorías al plato
+      categories.forEach((title) => {
+        const category = this[MODEL].createCategory(title);
+        this[MODEL].assignCategoryToDish(dish, category);
+      });
+
+      // Asigna los alérgenos al plato
+      allergens.forEach((title) => {
+        const allergen = this[MODEL].createAllergen(title);
+        this[MODEL].assignAllergenToDish(dish, allergen);
+      });
+
+      alert("Se ha creado el plato " + dish.getName());
+      done = true;
+    } catch (exception) {
+      // Si ocurre un error, marca la operación como no realizada y almacena el error
+      done = false;
+      error = exception;
+    }
+    console.log(this[MODEL]);
+  };
+
+  handleRemoveDishForm = () => {
+    // Muestra el formulario para eliminar platos y enlaza sus selecciones
+    this[VIEW].showRemoveDishForm(this[MODEL].categories);
+    this[VIEW].bindRemoveDishSelects(this.handleRemoveDishListByCategory);
+  };
+
+  handleRemoveDish = (name) => {
+    let done;
+    let error;
+    let dish;
+    try {
+      alert(name);
+      console.log("eliminar plato");
+
+      // Crea un objeto de plato a partir del nombre
+      dish = this[MODEL].createDish(name);
+      console.log(dish);
+
+      // Elimina el plato del modelo
+      this[MODEL].removeDish(dish);
+      console.log("eliminar plato remove");
+      done = true;
+      alert("Se ha eliminado el plato " + dish.getName());
+    } catch (exception) {
+      console.log(exception);
+      // Si ocurre un error, marca la operación como no realizada y almacena el error
+      done = false;
+      error = exception;
+    }
+  };
+
+  handleRemoveDishListByCategory = (category) => {
+    console.log("1");
+
+    // Crea un objeto de categoría a partir del nombre
+    const cat = this[MODEL].createCategory(category);
+    console.log("2");
+
+    // Muestra la lista de platos para eliminar
+    this[VIEW].showRemoveDishList(this[MODEL].getDishesInCategory(cat));
+    console.log("3");
+
+    // Enlaza la acción de eliminar plato
+    this[VIEW].bindRemoveDish(this.handleRemoveDish);
+    console.log("4");
+
+    // Enlaza la acción de mostrar plato
+    this[VIEW].bindShowDish(this.handleShowDish);
+    console.log("5");
+  };
+
+  handleModifyMenu = () => {
+    // Muestra el formulario para modificar menús y enlaza sus selecciones
+    this[VIEW].showModifyMenuForm(this[MODEL].menus, this[MODEL].dishes);
+    this[VIEW].bindModifyMenuSelects(this.handleModifyMenuForm);
+  };
+
+  handleModifyMenuForm = (nameM, dishM) => {
+    let dishAssing;
+    let menuAssing;
+    let comprobacion;
+    let correcto;
+    let array = new Array();
+    let done;
+    let error;
+
+    // Registra en la consola para depuración
+    console.log("hola17");
+    try {
+      console.log("hola18");
+      console.log(nameM);
+
+      // Crea un objeto de menú a partir de la entrada
+      menuAssing = this[MODEL].createMenu(nameM);
+      console.log(menuAssing);
+      console.log(this[MODEL]);
+      console.log("hola19");
+
+      // Crea un objeto de plato a partir de la entrada
+      dishAssing = this[MODEL].createDish(dishM);
+
+      // Obtiene los platos en el menú especificado
+      comprobacion = this[MODEL].getDishWithMenu(menuAssing);
+
+      // Comprueba si el plato ya está en el menú
+      for (const comprob of comprobacion) {
+        array.push(comprob);
+
+        if (comprob === dishAssing) {
+          correcto = comprob;
+        }
+      }
+
+      // Si el plato ya está en el menú, muestra una alerta
+      if (correcto) {
+        alert(
+          "El plato " +
+            dishAssing.getName() +
+            " ya existe en el menú  " +
+            menuAssing.getName()
+        );
+      } else {
+        // Asigna el plato al menú y muestra un mensaje de éxito
+        this[MODEL].assignDishToMenu(menuAssing, dishAssing);
+        alert(
+          "Se ha asignado al menú " +
+            menuAssing.getName() +
+            " el plato " +
+            dishAssing.getName()
+        );
+      }
+
+      // Marca la operación como realizada y registra el estado del modelo
+      done = true;
+      console.log(this[MODEL]);
+    } catch (exception) {
+      // Si ocurre un error, marca la operación como no realizada y almacena el error
+      done = false;
+      error = exception;
+    }
+  };
+
+  handleModifyMenuDesasig = () => {
+    // Muestra el formulario para desasignar menús y enlaza sus selecciones
+    this[VIEW].showModifyMenuDesasigForm(this[MODEL].menus, this[MODEL].dishes);
+    this[VIEW].bindModifyMenuDesasigSelects(this.handleModifyMenuDesasigForm);
+  };
+
+  handleModifyMenuDesasigForm = (nameM, dishM) => {
+    let dishDesasig;
+    let menuDesasig;
+    let comprobacion;
+    let correcto;
+    let array = new Array();
+    let done;
+    let error;
+
+    // Registra en la consola para depuración
+    console.log("hola17");
+    try {
+      console.log("hola18");
+      console.log(nameM);
+
+      // Crea un objeto de menú a partir de la entrada
+      menuDesasig = this[MODEL].createMenu(nameM);
+      console.log(menuDesasig);
+      console.log(this[MODEL]);
+      console.log("hola19");
+
+      // Crea un objeto de plato a partir de la entrada
+      dishDesasig = this[MODEL].createDish(dishM);
+
+      // Obtiene los platos en el menú especificado
+      comprobacion = this[MODEL].getDishWithMenu(menuDesasig);
+
+      // Comprueba si el plato está en el menú
+      for (const comprob of comprobacion) {
+        array.push(comprob);
+
+        if (comprob === dishDesasig) {
+          correcto = comprob;
+        }
+      }
+
+      // Si el plato está en el menú, lo desasigna y muestra un mensaje de éxito
+      if (correcto) {
+        this[MODEL].deassignDishToMenu(menuDesasig, dishDesasig);
+        alert(
+          "Se ha desasignado el plato " +
+            dishDesasig.getName() +
+            " del menú " +
+            menuDesasig.getName()
+        );
+      } else {
+        // Si el plato no está en el menú, muestra una alerta
+        alert(
+          "El plato " +
+            dishDesasig.getName() +
+            " no se ha podido desasignar del menú  " +
+            menuDesasig.getName() +
+            " porque este no lo contiene"
+        );
+      }
+
+      // Marca la operación como realizada y registra el estado del modelo
+      done = true;
+      console.log(this[MODEL]);
+    } catch (exception) {
+      // Si ocurre un error, marca la operación como no realizada y almacena el error
+      done = false;
+      error = exception;
+    }
+  };
+
+  handleNewRestaurantForm = () => {
+    // Muestra el formulario para crear un nuevo restaurante y enlaza sus selecciones
+    this[VIEW].showNewRestaurantForm();
+    this[VIEW].bindNewRestaurantForm(this.handleCreateRestaurant);
+  };
+
+  handleCreateRestaurant = (name, description, url, latitud, longitud) => {
+    // Crea un restaurante con la información proporcionada
+    const rest = this[MODEL].createRestaurant(name, description);
+    rest.setImage(url);
+    rest.location = new Coordinate(latitud, longitud);
+
+    let done;
+    let error;
+
+    try {
+      console.log("createrest");
+
+      // Agrega el restaurante al modelo
+      this[MODEL].addRestaurant(rest);
+      console.log("createrest2");
+      done = true;
+      console.log("createrest3");
+
+      this.onAddRestaurant();
+      console.log("createrest4");
+      console.log(this[MODEL]);
+    } catch (exception) {
+      // Si ocurre un error, marca la operación como no realizada y almacena el error
+      done = false;
+      error = exception;
+    }
+  };
+  handleAssingCategory = () => {
+    // Muestra el formulario para asignar categorías y enlaza sus selecciones
+    this[VIEW].showAssingCategoryForm(
+      this[MODEL].categories,
+      this[MODEL].dishes
+    );
+    this[VIEW].bindAssingCategorySelects(this.handleAssingCategoryForm);
+  };
+
+  handleAssingCategoryForm = (category, dishM) => {
+    let categoryAssing;
+    let dishAssing;
+    let comprobacion;
+    let correcto;
+    let array = new Array();
+    let done;
+    let error;
+
+    console.log("hola20");
+    try {
+      console.log("hola21");
+      console.log(this[MODEL]);
+
+      // Crea un objeto de categoría a partir de la entrada
+      categoryAssing = this[MODEL].createCategory(category);
+      console.log(categoryAssing);
+      console.log(this[MODEL]);
+      console.log("hola22");
+
+      // Crea un objeto de plato a partir de la entrada
+      dishAssing = this[MODEL].createDish(dishM);
+
+      // Obtiene los platos en la categoría especificada
+      comprobacion = this[MODEL].getDishesInCategory(categoryAssing);
+
+      // Comprueba si el plato ya está en la categoría
+      for (const comprob of comprobacion) {
+        array.push(comprob);
+
+        if (comprob === dishAssing) {
+          correcto = comprob;
+        }
+      }
+
+      // Si el plato ya está en la categoría, muestra una alerta
+      if (correcto) {
+        alert(
+          "El plato " +
+            dishAssing.getName() +
+            " ya contiene la categoría " +
+            categoryAssing.getName()
+        );
+      } else {
+        // Asigna la categoría al plato y muestra un mensaje de éxito
+        this[MODEL].assignCategoryToDish(dishAssing, categoryAssing);
+        alert(
+          "Se ha asignado la categoría " +
+            categoryAssing.getName() +
+            " al plato " +
+            dishAssing.getName()
+        );
+      }
+
+      // Marca la operación como realizada y registra el estado del modelo
+      done = true;
+      console.log(this[MODEL]);
+    } catch (exception) {
+      // Si ocurre un error, marca la operación como no realizada y almacena el error
+      done = false;
+      error = exception;
+    }
+  };
+
+  handleDesasigCategory = () => {
+    // Muestra el formulario para desasignar categorías y enlaza sus selecciones
+    this[VIEW].showDesasigCategoryForm(
+      this[MODEL].categories,
+      this[MODEL].dishes
+    );
+    this[VIEW].bindDesasigCategorySelects(this.handleDesasigCategoryForm);
+  };
+
+  handleDesasigCategoryForm = (category, dishM) => {
+    let categoryDesasig;
+    let dishDesasig;
+    let comprobacion;
+    let correcto;
+    let array = new Array();
+    let done;
+    let error;
+
+    //Consola para depuración
+    console.log("hola20");
+    try {
+      console.log("hola21");
+      console.log(this[MODEL]);
+
+      // Crea un objeto de categoría a partir de la entrada
+      categoryDesasig = this[MODEL].createCategory(category);
+      console.log(categoryDesasig);
+      console.log(this[MODEL]);
+      console.log("hola22");
+
+      // Crea un objeto de plato a partir de la entrada
+      dishDesasig = this[MODEL].createDish(dishM);
+
+      // Obtiene los platos en la categoría especificada
+      comprobacion = this[MODEL].getDishesInCategory(categoryDesasig);
+
+      // Comprueba si el plato está en la categoría
+      for (const comprob of comprobacion) {
+        array.push(comprob);
+
+        if (comprob === dishDesasig) {
+          correcto = comprob;
+        }
+      }
+
+      // Si el plato está en la categoría, lo desasigna y muestra un mensaje de éxito
+      if (correcto) {
+        this[MODEL].deassignCategoryToDish(dishDesasig, categoryDesasig);
+        alert("Se ha desasignado el plato correctamente");
+      } else {
+        // Si el plato no está en la categoría, muestra una alerta
+        alert("El plato no contiene la categoría seleccionada");
+      }
+      // Marca la operación como realizada y registra el estado del modelo
+      done = true;
+      console.log(this[MODEL]);
+    } catch (exception) {
+      // Si ocurre un error, marca la operación como no realizada y almacena el error
+      done = false;
+      error = exception;
+    }
   };
 }
 

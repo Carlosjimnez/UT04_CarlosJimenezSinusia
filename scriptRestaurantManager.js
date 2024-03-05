@@ -65,6 +65,9 @@ const RestaurantsManager = (function () {
     }
 
     getPositionMenus(menu) {
+      console.log("Position Menu");
+      console.log(menu);
+      console.log(this.menus);
       return this.menus.findIndex(
         (existingMenu) => existingMenu && existingMenu.menu.name === menu.name
       );
@@ -82,6 +85,15 @@ const RestaurantsManager = (function () {
         (existingRestaurant) =>
           existingRestaurant && existingRestaurant.name === restaurant.name
       );
+    }
+    getCategory(name) {
+      let cat = this.categories.get(name);
+      if (!cat) {
+        cat = new Category(name);
+      } else {
+        cat = cat.category;
+      }
+      return cat;
     }
 
     // Métodos para agregar y remover categorías, menús, alérgenos, platos y restaurantes
@@ -108,10 +120,15 @@ const RestaurantsManager = (function () {
     //Misma comprobaciones que en el metodo add pero aqui eliminamos
     // si encuentra el objeto y no lo encuentra salta Exception
     removeCategory(...categories) {
+      console.log("tarde");
       categories.forEach((category) => {
+        console.log("tarde2");
         if (category instanceof Category) {
+          console.log("tarde3");
           let indexCategory = this.getPositionCategories(category);
+          console.log("tarde4");
           if (indexCategory !== -1) {
+            console.log("tarde5");
             this.categories.splice(indexCategory, 1);
           } else {
             throw new CategoryNotFoundError();
@@ -416,6 +433,7 @@ const RestaurantsManager = (function () {
             );
 
             if (dishIndex === -1) {
+              console.log(dish);
               // Verificar si el plato ya está asignado al menú
               assignedDishes.push(dish); // Asignar el plato al menú
             } else {
@@ -598,11 +616,11 @@ const RestaurantsManager = (function () {
 
     createDish(name, description, ingredients, image) {
       const existingDish = this.dishes.find(
-        ({ dish }) => dish.getName() === name
+        (dish) => dish.dish.getName() === name
       );
 
       if (existingDish) {
-        return existingDish;
+        return existingDish.dish;
       } else {
         const newDish = new Dish(name, description, ingredients, image);
         return newDish;

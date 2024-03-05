@@ -28,6 +28,19 @@ const historyActions = {
   showDish: (event) => {
     ManagerAplication.handleShowDish(event.state.dish);
   },
+  newCategory: () => ManagerAplication.handleNewCategoryForm(),
+  removeCategory: () => ManagerAplication.handleRemoveCategoryForm(),
+  newDish: () => ManagerAplication.handleNewDishForm(),
+  removeDish: () => ManagerAplication.handleRemoveDishForm(),
+  removeDishByCategory: (event) => {
+    ManagerAplication.handleRemoveDishForm();
+    ManagerAplication.handleRemoveDishListByCategory(event.state.category);
+  },
+  modifyMenu: () => ManagerAplication.handleModifyMenuForm(),
+  modifyMenuDesasig: () => ManagerAplication.handleModifyMenuDesasig(),
+  newRestaurant: () => ManagerAplication.handleNewRestaurantForm(),
+  assingCategory: () => ManagerAplication.handleAssingCategory(),
+  desasigCategory: () => ManagerAplication.handleDesasigCategory(),
 };
 
 // Event listener para el evento popstate, que se dispara cuando cambia el historial de navegación
