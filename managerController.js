@@ -1,31 +1,24 @@
-import {
-  CategoryAlreadyExistsError,
-  CategoryNotFoundError,
-  MenuAlreadyExistsError,
-  MenuNotFoundError,
-  AllergenAlreadyExistsError,
-  AllergenNotFoundError,
-  DishAlreadyExistsError,
-  DishNotFoundError,
-  RestaurantAlreadyExistsError,
-  RestaurantNotFoundError,
-  InvalidObjectError,
-} from "./exceptions.js";
-
+import { getCookie } from "./utils.js";
 import Allergen from "./scriptRestaurantManager.js";
 import Menu from "./scriptRestaurantManager.js";
 import Dish from "./scriptRestaurantManager.js";
 import Restaurant from "./scriptRestaurantManager.js";
 import Category from "./scriptRestaurantManager.js";
 import { Coordinate } from "./coordinate.js";
+import { ManagerAplication } from "./managerAplication.js";
+
 const MODEL = Symbol("managerModel");
 const VIEW = Symbol("managerView");
 const LOAD_MANAGER_OBJECTS = Symbol("Load Manager Objects");
+const AUTH = Symbol("AUTH");
+const USER = Symbol("USER");
 
 class ManagerController {
-  constructor(model, view) {
+  constructor(model, view, auth) {
     this[MODEL] = model;
     this[VIEW] = view;
+    this[AUTH] = auth;
+    this[USER] = null;
 
     this.onLoad();
     this.onInit();
@@ -247,18 +240,19 @@ class ManagerController {
     this.onAddMenu();
     this.onAddRestaurant();
     this.onCloseFileWindow();
-    this[VIEW].showAdminMenu();
-    this[VIEW].bindAdminMenu(
-      this.handleNewCategoryForm,
-      this.handleRemoveCategoryForm,
-      this.handleNewDishForm,
-      this.handleRemoveDishForm,
-      this.handleModifyMenu,
-      this.handleModifyMenuDesasig,
-      this.handleNewRestaurantForm,
-      this.handleAssingCategory,
-      this.handleDesasigCategory
-    );
+    if (getCookie("accetedCookieMessage") !== "true") {
+      this[VIEW].showCookiesMessage();
+    }
+    const userCookie = getCookie("activeUser");
+    if (userCookie) {
+      const user = this[AUTH].getUser(userCookie);
+      if (user) {
+        this[USER] = user;
+        this.onOpenSession();
+      }
+    } else {
+      this.onCloseSession();
+    }
   };
 
   // Con estos metodos se manejan acciones relacionadas con la adición de categorías, menus, alergenos y restaurantes
@@ -291,6 +285,34 @@ class ManagerController {
     //Evento para cerrar ventanas de fichas
     this[VIEW].bindShowCloseFilesWindow(this.handleCloseFileWindow);
   };
+
+  onOpenSession() {
+    this.onInit();
+    this[VIEW].initHistory();
+    this[VIEW].showAuthUserProfile(this[USER]);
+    this[VIEW].bindCloseSession(this.handleCloseSession);
+    this[VIEW].showAdminMenu();
+    this[VIEW].bindAdminMenu(
+      this.handleNewCategoryForm,
+      this.handleRemoveCategoryForm,
+      this.handleNewDishForm,
+      this.handleRemoveDishForm,
+      this.handleModifyMenu,
+      this.handleModifyMenuDesasig,
+      this.handleNewRestaurantForm,
+      this.handleAssingCategory,
+      this.handleDesasigCategory
+    );
+  }
+
+  onCloseSession() {
+    this[USER] = null;
+    this[VIEW].deleteUserCookie();
+    this[VIEW].showIdentificationLink();
+    this[VIEW].bindIdentificationLink(this.handleLoginForm);
+    this[VIEW].removeAdminMenu();
+  }
+
   // Inicialización de la aplicación
   onInit = () => {
     this[VIEW].showCategories(this[MODEL].getCategories());
@@ -835,6 +857,28 @@ class ManagerController {
       done = false;
       error = exception;
     }
+  };
+  handleLoginForm = () => {
+    this[VIEW].showLogin();
+    this[VIEW].bindLogin(this.handleLogin);
+  };
+
+  handleLogin = (username, password, remember) => {
+    if (this[AUTH].validateUser(username, password)) {
+      this[USER] = this[AUTH].getUser(username);
+      this.onOpenSession();
+    } else {
+      this[VIEW].showInvalidUserMessage();
+    }
+    if (remember) {
+      this[VIEW].setUserCookie(this[USER]);
+    }
+  };
+
+  handleCloseSession = () => {
+    this.onCloseSession();
+    this.onInit();
+    this[VIEW].initHistory();
   };
 }
 

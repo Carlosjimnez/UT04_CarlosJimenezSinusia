@@ -41,6 +41,7 @@ const historyActions = {
   newRestaurant: () => ManagerAplication.handleNewRestaurantForm(),
   assingCategory: () => ManagerAplication.handleAssingCategory(),
   desasigCategory: () => ManagerAplication.handleDesasigCategory(),
+  login: () => ManagerAplication.handleLoginForm(),
 };
 
 // Event listener para el evento popstate, que se dispara cuando cambia el historial de navegación

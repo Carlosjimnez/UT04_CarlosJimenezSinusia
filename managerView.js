@@ -8,6 +8,7 @@ import {
   desasigCategoryValidationForm,
 } from "./validation.js";
 
+import { setCookie } from "./utils.js";
 const EXCECUTE_HANDLER = Symbol("excecuteHandler");
 
 class ManagerView {
@@ -1625,6 +1626,194 @@ class ManagerView {
     console.log("bindDesasig");
     desasigCategoryValidationForm(handler);
     console.log("validaDesasig");
+  }
+
+  showCookiesMessage() {
+    const toast = `<div class="fixed-top p-5 mt-5">
+    <div id="cookies-message" class="toast fade show bg-dark text-white
+    w-100 mw-100" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+    <h4 class="me-auto">Aviso de uso de cookies</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="toast"
+    aria-label="Close" id="btnDismissCookie"></button>
+    </div>
+    <div class="toast-body p-4 d-flex flex-column">
+    <p>
+    Este sitio web almacenda datos en cookies para activar su
+    funcionalidad, entre las que se encuentra
+    datos analíticos y personalización. Para poder utilizar este
+    sitio, estás automáticamente aceptando
+    que
+    utilizamos cookies.
+    </p>
+    <div class="ml-auto">
+    <button type="button" class="btn btn-outline-light mr-3 deny"
+    id="btnDenyCookie" data-bs-dismiss="toast">
+    Denegar
+    </button>
+    <button type="button" class="btn btn-primary"
+    id="btnAcceptCookie" data-bs-dismiss="toast">
+    Aceptar
+    </button>
+    </div>
+    </div>
+    </div>
+    </div>`;
+    document.body.insertAdjacentHTML("afterbegin", toast);
+
+    const cookiesMessage = document.getElementById("cookies-message");
+    cookiesMessage.addEventListener("hidden.bs.toast", (event) => {
+      event.currentTarget.parentElement.remove();
+    });
+
+    const btnAcceptCookie = document.getElementById("btnAcceptCookie");
+    btnAcceptCookie.addEventListener("click", (event) => {
+      setCookie("accetedCookieMessage", "true", 1);
+    });
+
+    const denyCookieFunction = (event) => {
+      this.main.replaceChildren();
+      this.main.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="container my3"><div class="alert alert-warning" role="alert">
+      <strong>Para utilizar esta web es necesario aceptar el uso de
+      cookies. Debe recargar la página y aceptar las condicones para seguir
+      navegando. Gracias.</strong>
+      </div></div>`
+      );
+      this.categories.remove();
+      this.menu.remove();
+    };
+    const btnDenyCookie = document.getElementById("btnDenyCookie");
+    btnDenyCookie.addEventListener("click", denyCookieFunction);
+    const btnDismissCookie = document.getElementById("btnDismissCookie");
+    btnDismissCookie.addEventListener("click", denyCookieFunction);
+  }
+  showIdentificationLink() {
+    const userArea = document.getElementById("userArea");
+    userArea.replaceChildren();
+    userArea.insertAdjacentHTML(
+      "afterbegin",
+      `<div class="account d-flex
+    mx-2 flex-column" style="text-align: right; height: 40px">
+    <a id="login" href="#"><i class="bi bi-person-circle" ariahidden="true"></i> Identificate</a>
+    </div>`
+    );
+  }
+  bindIdentificationLink(handler) {
+    const login = document.getElementById("login");
+    login.addEventListener("click", (event) => {
+      this[EXCECUTE_HANDLER](
+        handler,
+        [],
+        "main",
+        { action: "login" },
+        "#",
+        event
+      );
+    });
+  }
+  showLogin() {
+    this.centro.replaceChildren();
+    const login = `<div class="container h-100">
+    <div class="d-flex justify-content-center h-100">
+    <div class="user_card">
+    <div class="d-flex justify-content-center form_container">
+    <form name="fLogin" role="form" novalidate>
+    <div class="input-group mb-3">
+    <div class="input-group-append">
+    <span class="input-group-text"><i class="bi bi-personcircle"></i></span>
+    </div>
+    <input type="text" name="username" class="form-control
+    input_user" value="" placeholder="usuario">
+    </div>
+    <div class="input-group mb-2">
+    <div class="input-group-append">
+    <span class="input-group-text"><i class="bi bi-keyfill"></i></span>
+    </div>
+    <input type="password" name="password" class="form-control
+    input_pass" value="" placeholder="contraseña">
+    </div>
+    <div class="form-group">
+    <div class="custom-control custom-checkbox">
+    <input name="remember" type="checkbox" class="customcontrol-input" id="customControlInline">
+    <label class="custom-control-label"
+    for="customControlInline">Recuerdame</label>
+    </div>
+    </div>
+    <div class="d-flex justify-content-center mt-3
+    login_container">
+    <button class="btn login_btn"
+    type="submit">Acceder</button>
+    </div>
+    </form>
+    </div>
+    </div>
+    </div>
+    </div>`;
+    this.centro.insertAdjacentHTML("afterbegin", login);
+  }
+
+  bindLogin(handler) {
+    const form = document.forms.fLogin;
+    form.addEventListener("submit", (event) => {
+      handler(form.username.value, form.password.value, form.remember.checked);
+      event.preventDefault();
+    });
+  }
+
+  showInvalidUserMessage() {
+    this.centro.insertAdjacentHTML(
+      "beforeend",
+      `<div class="container my3"><div class="alert alert-warning" role="alert">
+    <strong>El usuario y la contraseña no son válidos. Inténtelo
+    nuevamente.</strong>
+    </div></div>`
+    );
+    document.forms.fLogin.reset();
+    document.forms.fLogin.username.focus();
+  }
+
+  initHistory() {
+    history.replaceState({ action: "init" }, null);
+  }
+
+  showAuthUserProfile(user) {
+    const userArea = document.getElementById("userArea");
+    userArea.replaceChildren();
+    userArea.insertAdjacentHTML(
+      "afterbegin",
+      `<div class="d-flex justify-content-between mx-2">
+        <div class="account flex-grow-1">
+          ${user.username} <a id="aCloseSession" href="#">Cerrar sesión</a>
+        </div>
+        <div class="image">
+          <img alt="${user.username}" src="imagen/user.jpeg" />
+        </div>
+      </div>`
+    );
+  }
+
+  setUserCookie(user) {
+    setCookie("activeUser", user.username, 1);
+  }
+
+  deleteUserCookie() {
+    setCookie("activeUser", "", 0);
+  }
+
+  removeAdminMenu() {
+    const adminMenu = document.getElementById("navServices");
+    if (adminMenu) adminMenu.parentElement.remove();
+  }
+
+  bindCloseSession(handler) {
+    document
+      .getElementById("aCloseSession")
+      .addEventListener("click", (event) => {
+        handler();
+        event.preventDefault();
+      });
   }
 }
 export default ManagerView;
