@@ -1,0 +1,249 @@
+{
+  "categories": [
+    {
+      "name": "Primeros",
+      "description": "Platos Frios",
+      "imagen": "imagen/ensaColiflor.jpg"
+    },
+    {
+      "name": "Segundos",
+      "description": "Platos Calientes",
+      "imagen": "imagen/carne.jpg"
+    },
+
+    {
+      "name": "Postres",
+      "description": "Platos Dulces y Salados",
+      "imagen": "imagen/brazo.jpg"
+    }
+  ],
+  "dishes": [
+    {
+      "name": "Ensaladilla de Coliflor",
+      "description": "Plato sencillo y fresco que se prepara con ingredientes caseros y que te va a encantar si eres amante de la verdura",
+      "ingredients": [
+        "coliflor",
+        "atun",
+        "huevo duro",
+        "mayonesa",
+        "cebolla fresca"
+      ],
+      "image": "imagen/ensaColiflor.jpg",
+      "category": "Primeros",
+      "menus": ["Menú Infinito"],
+      "allergens": ["Pimiento", "Frutos"]
+    },
+    {
+      "name": "Ensaladilla Pulpo",
+      "description": "Ensaladilla de pulpo con un toque ‘a la gallega’",
+      "ingredients": [
+        "pulpo",
+        "mayonesa",
+        "pimiento rojo",
+        "cebolla",
+        "patatas"
+      ],
+      "image": "imagen/ensaPulpo.jpg",
+      "category": "Primeros",
+      "menus": ["Menú Especial"],
+      "allergens": ["Pimiento"]
+    },
+    {
+      "name": "Ensalada de Arroz",
+      "description": "Ensalada de arroz y verduritas se puede preparar con verduras de temporada, un plato fresco y sencillo",
+      "ingredients": ["arroz", "verduras variadas", "ajo", "zumo de lima"],
+      "image": "imagen/ensaArroz.jpg",
+      "category": "Primeros",
+      "menus": ["Menú Estrella"],
+      "allergens": []
+    },
+    {
+      "name": "Ensalada de Pasta al Pesto",
+      "description": "Esta ensalada de patatas al pesto es fresca y natural. El pesto casero tiene más frescura y sabor.",
+      "ingredient": [
+        "albahaca fresca",
+        "ajo",
+        "queso parmesano",
+        "piñones",
+        "sal y pimienta"
+      ],
+      "image": "imagen/ensaPasta.jpg",
+      "category": "Primeros",
+      "menus": [],
+      "allergens": []
+    },
+    {
+      "name": "Paletilla de Cabrito",
+      "description": "Esta receta es la mezcla perfecta entre modernidad y clasicismo, ¡atrévete!",
+      "ingredients": [
+        "cabrito",
+        "sal y pimienta",
+        "caldo de cocido",
+        "mantequilla"
+      ],
+      "image": "imagen/paletillaCabri.jpg",
+      "category": "Segundos",
+      "menus": ["Menú Infinito"],
+      "allergens": []
+    },
+    {
+      "name": "Tartar de Salmon",
+      "description": "Necesitas que un plato sea caliente para que sea espectacular como este tartar",
+      "ingredients": ["salmon", "rabanitos", "lima", "kimchi", "cebolleta"],
+      "image": "imagen/tartarSalmon.jpg",
+      "category": "Segundos",
+      "menus": ["Menú Especial"],
+      "allergens": ["Pimiento", "Pescado"]
+    },
+    {
+      "name": "Makis de Atun",
+      "description": "Una receta sencilla, deliciosa y fresca. Perfecta para los amantes del sushi que quieren iniciarse en su cocinado",
+      "ingredients": [
+        "atun fresco",
+        "cebolleta",
+        "soja",
+        "arroz",
+        "aguacate",
+        "jengibre"
+      ],
+      "image": "imagen/makis.jpg",
+      "categoty": "Segundos",
+      "menus": ["Menú Estrella"],
+      "allergens": ["Pescado"]
+    },
+    {
+      "name": "Lomo de Cerdo",
+      "description": "Lomo de cerdo en escabeche de especias, receta ideal para el verano",
+      "ingredients": ["lomo", "ajo", "vinagre", "anis", "canela"],
+      "image": "imagen/lomo.jpg",
+      "category": "Segundos",
+      "menus": [],
+      "allergens": []
+    },
+    {
+      "name": "Tarta de Queso",
+      "description": "La tarta de queso es uno de los postres que más alegrías nos dan",
+      "ingredients": ["huevos", "queso", "vainila", "harina"],
+      "image": "imagen/tartaQueso.jpg",
+      "category": "Postres",
+      "menus": ["Menú Infinito"],
+      "allergens": ["Lacteos"]
+    },
+    {
+      "name": "Tarta 3 Chocolates",
+      "description": "Con un trozo de esta tendrás suficiente",
+      "ingredients": ["galleta", "chocolate tres tipos", "leche"],
+      "image": "imagen/tartaChoco.jpg",
+      "category": "Postres",
+      "menus": ["Menú Especial"],
+      "allergens": ["Lacteos"]
+    },
+    {
+      "name": "Coulants de Chocolate",
+      "description": "El contraste del frío y calor está presente en este postre",
+      "ingredients": [
+        "huevos",
+        "chocolate negro",
+        "mantequilla",
+        "azucar",
+        "almendras",
+        "helado"
+      ],
+      "image": "imagen/coulant.jpg",
+      "category": "Postres",
+      "menus": ["Menú Estrella"],
+      "allergens": ["Frutos", "Lacteos"]
+    },
+    {
+      "name": "Brazo de Gitano",
+      "description": "Este brazo si que se puede comer",
+      "ingredients": [
+        "huevos",
+        "harina",
+        "azucar",
+        "dulce de leche",
+        "azucar glas",
+        "mantequilla"
+      ],
+      "image": "imagen/brazo.jpg",
+      "category": "Postres",
+      "menus": [],
+      "allergens": ["Lacteos"]
+    }
+  ],
+  "allergens": [
+    {
+      "name": "Pimiento"
+    },
+    {
+      "name": "Frutos"
+    },
+    {
+      "name": "Lacteos"
+    },
+    {
+      "name": "Pescado"
+    }
+  ],
+  "menus": [
+    {
+      "name": "Menú Infinito",
+      "description": "La Mejor combinación de estos platos",
+      "dishes": [
+        "Ensaladilla de Coliflor",
+        "Ensaladilla Pulpo",
+        "Ensalada de Arroz",
+        "Ensalada de Pasta al Pesto"
+      ]
+    },
+    {
+      "name": "Menú Especial",
+      "description": "Lo que nunca falla",
+      "dishes": [
+        "Paletilla de Cabrito",
+        "Tartar de Salmon",
+        "Makis de Atun",
+        "Lomo de Cerdo"
+      ]
+    },
+    {
+      "name": "Menú Estrella",
+      "description": "O hoy o nunca",
+      "dishes": [
+        "Tarta de Queso",
+        "Tarta 3 Chocolates",
+        "Coulants de Chocolate",
+        "Brazo de Gitano"
+      ]
+    }
+  ],
+  "restaurants": [
+    {
+      "name": "Lioko",
+      "description": "Los mejores platos tradicionales",
+      "image": "imagen/restaurante1.jpg",
+      "location": {
+        "latitude": "-0.1257400",
+        "longitude": "51.5085300"
+      }
+    },
+    {
+      "name": "Codigo II",
+      "description": "Preparate para lo mas innovador",
+      "image": "imagen/restaurante3.jpg",
+      "location": {
+        "latitude": "41.38879",
+        "longitude": "2.15899"
+      }
+    },
+    {
+      "name": "La Antigua",
+      "description": "Restaurante 3 Estrellas Michelin",
+      "image": "imagen/restaurante4.jpg",
+      "location": {
+        "latitude": "2.3486000",
+        "longitude": "48.8534000"
+      }
+    }
+  ]
+}

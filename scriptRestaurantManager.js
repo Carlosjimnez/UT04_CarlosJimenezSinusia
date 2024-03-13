@@ -359,7 +359,7 @@ const RestaurantsManager = (function () {
       if (dish instanceof Dish) {
         let dishIndex = this.getPositionDishes(dish);
 
-        if (dishIndex === -1) {
+        if (dishIndex !== -1) {
           this.dishes.push({
             dish,
             category: [],

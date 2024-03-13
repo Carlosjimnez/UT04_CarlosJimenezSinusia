@@ -21,238 +21,123 @@ class ManagerController {
     this[USER] = null;
 
     this.onLoad();
-    this.onInit();
-    this[VIEW].bindInit(this.handleInit);
   }
 
-  [LOAD_MANAGER_OBJECTS]() {
-    const category1 = this[MODEL].createCategory("Primeros");
-    const category2 = this[MODEL].createCategory("Segundos");
-    const category3 = this[MODEL].createCategory("Postres");
+  [LOAD_MANAGER_OBJECTS](data) {
+    const { categories, dishes, allergens, menus, restaurants } = data;
 
-    category1.description = "Platos Frios";
-    category2.description = "Platos Calientes";
-    category3.description = "Platos Dulces y Salados";
+    // Crear y agregar categorías al modelo
+    categories.forEach((categoryData) => {
+      const category = this[MODEL].createCategory(categoryData.name);
+      category.description = categoryData.description;
+      category.imagen = categoryData.imagen;
+      this[MODEL].addCategory(category);
+    });
 
-    category1.imagen = "imagen/ensaColiflor.jpg";
-    category2.imagen = "imagen/carne.jpg";
-    category3.imagen = "imagen/brazo.jpg";
+    // Crear y agregar menús al modelo
+    menus.forEach((menuData) => {
+      const menu = this[MODEL].createMenu(menuData.name);
+      this[MODEL].addMenu(menu);
+    });
 
-    this[MODEL].addCategory(category1, category2, category3);
+    // Crear y agregar alérgenos al modelo
+    allergens.forEach((allergenData) => {
+      const allergen = this[MODEL].createAllergen(allergenData.name);
+      this[MODEL].addAllergen(allergen);
+    });
 
-    let primero1 = this[MODEL].createDish("Ensaladilla de Coliflor");
-    let primero2 = this[MODEL].createDish("Ensaladilla Pulpo");
-    let primero3 = this[MODEL].createDish("Ensalada de Arroz");
-    let primero4 = this[MODEL].createDish("Ensalada de Pasta al Pesto");
-    let segundo1 = this[MODEL].createDish("Paletilla de Cabrito");
-    let segundo2 = this[MODEL].createDish("Tartar de Salmon");
-    let segundo3 = this[MODEL].createDish("Makis de Atun");
-    let segundo4 = this[MODEL].createDish("Lomo de Cerdo");
-    let postre1 = this[MODEL].createDish("Tarta de Queso");
-    let postre2 = this[MODEL].createDish("Tarta 3 Chocolates");
-    let postre3 = this[MODEL].createDish("Coulants de Chocolate");
-    let postre4 = this[MODEL].createDish("Brazo de Gitano");
+    // Crear y agregar platos al modelo
+    dishes.forEach((dishData) => {
+      const dish = this[MODEL].createDish(dishData.name);
+      dish.description = dishData.description;
+      dish.ingredients = dishData.ingredients;
+      dish.image = dishData.image;
 
-    primero1.description =
-      "Plato sencillo y fresco que se prepara con ingredientes caseros y que te va a encantar si eres amante de la verdura";
-    primero2.description = "Ensaladilla de pulpo con un toque ‘a la gallega’";
-    primero3.description =
-      "Ensalada de arroz y verduritas se puede preparar con verduras de temporada, un plato fresco y sencillo";
-    primero4.description =
-      "Esta ensalada de patatas al pesto es fresca y natural. El pesto casero tiene más frescura y sabor.";
-    segundo1.description =
-      "Esta receta es la mezcla perfecta entre modernidad y clasicismo, ¡atrévete!";
-    segundo2.description =
-      "Necesitas que un plato sea caliente para que sea espectacular como este tartar";
-    segundo3.description =
-      "Una receta sencilla, deliciosa y fresca. Perfecta para los amantes del sushi que quieren iniciarse en su cocinado";
-    segundo4.description =
-      "Lomo de cerdo en escabeche de especias, receta ideal para el verano";
-    postre1.description =
-      "La tarta de queso es uno de los postres que más alegrías nos dan";
-    postre2.description = "Con un trozo de esta tendras suficiente";
-    postre3.description =
-      "El contraste del frio y calor está presente en este postre";
-    postre4.description = "Este brazo si que se puede comer";
-
-    primero1.ingredients = [
-      "coliflor",
-      "atun",
-      "huevo duro",
-      "mayonesa",
-      "cebolla fresca",
-    ];
-    primero2.ingredients = [
-      "pulpo",
-      "mayonesa",
-      "pimiento rojo",
-      "cebolla",
-      "patatas",
-    ];
-    primero3.ingredients = [
-      "arroz",
-      "verduras variadas",
-      "ajo",
-      "zumo de lima",
-    ];
-    primero4.ingredients = [
-      "albahaca fresca",
-      "ajo",
-      "queso parmesano",
-      "piñones",
-      "sal y pimienta",
-    ];
-    segundo1.ingredients = [
-      "cabrito",
-      "sal y pimienta",
-      "caldo de cocido",
-      "mantequilla",
-    ];
-    segundo2.ingredients = [
-      "salmon",
-      "rabanitos",
-      "lima",
-      "kimchi",
-      "cebolleta",
-    ];
-    segundo3.ingredients = [
-      "atun fresco",
-      "cebolleta",
-      "soja",
-      "arroz",
-      "aguacate",
-      "jengibre",
-    ];
-    segundo4.ingredients = ["lomo", "ajo", "vinagre", "anis", "canela"];
-    postre1.ingredients = ["huevos", "queso", "vainila", "harina"];
-    postre2.ingredients = ["galleta", "chocolate tres tipos", "leche"];
-    postre3.ingredients = [
-      "huevos",
-      "chocolate negro",
-      "mantequilla",
-      "azucar",
-      "almendras",
-      "helado",
-    ];
-    postre4.ingredients = [
-      "huevos",
-      "harina",
-      "azucar",
-      "dulce de leche",
-      "azucar glas",
-      "mantequilla",
-    ];
-
-    primero1.image = "imagen/ensaColiflor.jpg";
-    primero2.image = "imagen/ensaPulpo.jpg";
-    primero3.image = "imagen/ensaArroz.jpg";
-    primero4.image = "imagen/ensaPasta.jpg";
-    segundo1.image = "imagen/paletillaCabri.jpg";
-    segundo2.image = "imagen/tartarSalmon.jpg";
-    segundo3.image = "imagen/makis.jpg";
-    segundo4.image = "imagen/lomo.jpg";
-    postre1.image = "imagen/tartaQueso.jpg";
-    postre2.image = "imagen/tartaChoco.jpg";
-    postre3.image = "imagen/coulant.jpg";
-    postre4.image = "imagen/brazo.jpg";
-
-    this[MODEL].addDish(
-      primero1,
-      primero2,
-      primero3,
-      primero4,
-      segundo1,
-      segundo2,
-      segundo3,
-      segundo4,
-      postre1,
-      postre2,
-      postre3,
-      postre4
-    );
-
-    let allergen1 = this[MODEL].createAllergen("Pimiento");
-    let allergen2 = this[MODEL].createAllergen("Frutos");
-    let allergen3 = this[MODEL].createAllergen("Lacteos");
-    let allergen4 = this[MODEL].createAllergen("Pescado");
-
-    this[MODEL].addAllergen(allergen1, allergen2, allergen3, allergen4);
-
-    let menu1 = this[MODEL].createMenu("Menú Infinito");
-    let menu2 = this[MODEL].createMenu("Menú Especial");
-    let menu3 = this[MODEL].createMenu("Menú Estrella");
-
-    menu1.description = "La Mejor combinación de estos platos";
-    menu2.description = "Lo que nunca falla";
-    menu3.description = "O hoy o nunca";
-
-    this[MODEL].addMenu(menu1, menu2, menu3);
-
-    // Creamos nuestros restaurantes
-    let restLioko = this[MODEL].createRestaurant("Lioko");
-    let restCogido = this[MODEL].createRestaurant("Codigo II");
-    let restAntigua = this[MODEL].createRestaurant("La Antigua");
-
-    restLioko.image = "imagen/restaurante1.jpg";
-    restCogido.image = "imagen/restaurante3.jpg";
-    restAntigua.image = "imagen/restaurante4.jpg";
-
-    restLioko.description = "Los mejores platos tradicionales";
-    restCogido.description = "Preparate para lo mas innovador";
-    restAntigua.description = "Restaurante 3 Estrellas Michelin ";
-
-    restLioko.location = new Coordinate("-0.1257400", "51.5085300");
-    restCogido.location = new Coordinate("41.38879", " 2.15899");
-    restAntigua.location = new Coordinate("2.3486000", "48.8534000");
-
-    this[MODEL].addRestaurant(restLioko, restCogido, restAntigua);
-
-    this[MODEL].assignCategoryToDish(primero1, category1);
-    this[MODEL].assignCategoryToDish(primero2, category1);
-    this[MODEL].assignCategoryToDish(primero3, category1);
-    this[MODEL].assignCategoryToDish(primero4, category1);
-    this[MODEL].assignCategoryToDish(segundo1, category2);
-    this[MODEL].assignCategoryToDish(segundo2, category2);
-    this[MODEL].assignCategoryToDish(segundo3, category2);
-    this[MODEL].assignCategoryToDish(segundo4, category2);
-    this[MODEL].assignCategoryToDish(postre1, category3);
-    this[MODEL].assignCategoryToDish(postre2, category3);
-    this[MODEL].assignCategoryToDish(postre3, category3);
-    this[MODEL].assignCategoryToDish(postre4, category3);
-
-    this[MODEL].assignDishToMenu(menu1, primero1, segundo1, postre1);
-    this[MODEL].assignDishToMenu(menu2, primero2, segundo2, postre2);
-    this[MODEL].assignDishToMenu(menu3, primero3, segundo3, postre3);
-
-    this[MODEL].assignAllergenToDish(primero2, allergen1);
-    this[MODEL].assignAllergenToDish(segundo2, allergen1, allergen4);
-    this[MODEL].assignAllergenToDish(segundo3, allergen4);
-    this[MODEL].assignAllergenToDish(postre3, allergen2, allergen3);
-    this[MODEL].assignAllergenToDish(postre1, allergen3);
-    this[MODEL].assignAllergenToDish(postre2, allergen3);
-    this[MODEL].assignAllergenToDish(postre4, allergen3);
-  }
-  // Con onLoad cargarmos los metodos
-  onLoad = () => {
-    this[LOAD_MANAGER_OBJECTS]();
-    this.onAddCategory();
-    this.onAddAllergen();
-    this.onAddMenu();
-    this.onAddRestaurant();
-    this.onCloseFileWindow();
-    if (getCookie("accetedCookieMessage") !== "true") {
-      this[VIEW].showCookiesMessage();
-    }
-    const userCookie = getCookie("activeUser");
-    if (userCookie) {
-      const user = this[AUTH].getUser(userCookie);
-      if (user) {
-        this[USER] = user;
-        this.onOpenSession();
+      // Asignar categoría al plato
+      if (dishData.category) {
+        const category = this[MODEL].createCategory(dishData.category);
+        this[MODEL].assignCategoryToDish(dish, category);
       }
-    } else {
-      this.onCloseSession();
-    }
+
+      // Asignar menús al plato
+      if (dishData.menus) {
+        dishData.menus.forEach((menuName) => {
+          const menu = this[MODEL].createMenu(menuName);
+          this[MODEL].assignDishToMenu(menu, dish);
+        });
+      }
+      //Error
+      // Asignar alérgenos al plato
+      if (dishData.allergen) {
+        console.log("Holaaaaaaaa");
+
+        // dishData.allergens.forEach((allergenName) => {
+        //   const allergen = this[MODEL].createAllergen(allergenName);
+        //   console.log(allergen);
+        //   this[MODEL].assignAllergenToDish(dish, allergen);
+        // });
+        for (const all of allergens) {
+          const allergen = this[MODEL].createAllergen(all);
+
+          this[MODEL].assignAllergenToDish(dish, allergen);
+        }
+      }
+    });
+
+    // Crear y agregar restaurantes al modelo
+    restaurants.forEach((restaurantData) => {
+      const restaurant = this[MODEL].createRestaurant(restaurantData.name);
+      restaurant.description = restaurantData.description;
+      restaurant.location = new Coordinate(
+        restaurantData.location.latitude,
+        restaurantData.location.longitude
+      );
+      restaurant.image = restaurantData.image;
+      this[MODEL].addRestaurant(restaurant);
+    });
+  }
+
+  //Método para manejar la carga de la página
+  onLoad = () => {
+    // Hacemos un fetch para cargar todos los datos iniciales de nuestra aplicación
+    // que se encuentran en el JSON que está dentro de nuestra carpeta data
+    fetch("./data/data.json")
+      .then((response) => response.json())
+      .then((data) => {
+        // Llamamos al método correspondiente para cargar los datos
+        this[LOAD_MANAGER_OBJECTS](data);
+        this.onInit();
+        this[VIEW].bindInit(this.handleInit);
+        this.onAddCategory(); // Menu categorías
+        this.onAddAllergen(); // Menu alérgenos
+        this.onAddMenu(); // Menu de los menús del restaurante
+        this.onAddRestaurant(); // Menu de restaurantes
+        this.onCloseFileWindow(); // Botón para cerrar ventanas
+
+        // Verificamos si se ha aceptado el mensaje de la cookie
+        // Si no se aceptó, lo mostraremos al usuario desde nuestra vista
+        if (getCookie("acceptedCookieMessage") !== "true") {
+          this[VIEW].showCookiesMessage(); // Función que creamos en nuestra vista para mostrar el mensaje de la cookie
+        }
+
+        // Verificamos si hay una cookie de usuario guardada
+        const userCookie = getCookie("activeUser");
+
+        // Si existe la cookie, intentamos iniciar sesión automáticamente
+        if (userCookie) {
+          const user = this[AUTH].getUser(userCookie);
+          if (user) {
+            this[USER] = user;
+            this.onOpenSession();
+          }
+        } else {
+          // Si no hay una cookie de usuario, cerramos la sesión
+          this.onCloseSession();
+        }
+      })
+      .catch((error) => {
+        console.error("Error loading JSON:", error);
+      });
   };
 
   // Con estos metodos se manejan acciones relacionadas con la adición de categorías, menus, alergenos y restaurantes
@@ -285,14 +170,21 @@ class ManagerController {
     //Evento para cerrar ventanas de fichas
     this[VIEW].bindShowCloseFilesWindow(this.handleCloseFileWindow);
   };
-
+  // Método para abrir sesión de usuario
   onOpenSession() {
+    alert("Hola " + this[USER].username);
     this.onInit();
+    // Inicializar el historial del navegador
     this[VIEW].initHistory();
+    // Mostrar el perfil de usuario autenticado
     this[VIEW].showAuthUserProfile(this[USER]);
+    // Enlazar la funcionalidad para cerrar sesión
     this[VIEW].bindCloseSession(this.handleCloseSession);
+    // Mostrar el menú de administrador
     this[VIEW].showAdminMenu();
+    // Enlazar la funcionalidad del menú de administrador
     this[VIEW].bindAdminMenu(
+      // Funciones manejadoras para formularios y acciones de administrador
       this.handleNewCategoryForm,
       this.handleRemoveCategoryForm,
       this.handleNewDishForm,
@@ -301,15 +193,22 @@ class ManagerController {
       this.handleModifyMenuDesasig,
       this.handleNewRestaurantForm,
       this.handleAssingCategory,
-      this.handleDesasigCategory
+      this.handleDesasigCategory,
+      this.generarBackup
     );
   }
 
+  // Método para cerrar sesión de usuario
   onCloseSession() {
+    // Establecer el usuario como nulo
     this[USER] = null;
+    // Eliminar la cookie de usuario
     this[VIEW].deleteUserCookie();
+    // Mostrar el enlace de identificación
     this[VIEW].showIdentificationLink();
+    // Enlazar la funcionalidad del enlace de identificación
     this[VIEW].bindIdentificationLink(this.handleLoginForm);
+    // Eliminar el menú de administrador
     this[VIEW].removeAdminMenu();
   }
 
@@ -858,27 +757,135 @@ class ManagerController {
       error = exception;
     }
   };
+  // Manejador para el formulario de inicio de sesión
   handleLoginForm = () => {
+    // Mostrar el formulario de inicio de sesión
     this[VIEW].showLogin();
+    // Enlazar la funcionalidad para enviar el formulario de inicio de sesión
     this[VIEW].bindLogin(this.handleLogin);
   };
 
+  // Manejador para el inicio de sesión
   handleLogin = (username, password, remember) => {
+    // Validar las credenciales del usuario
     if (this[AUTH].validateUser(username, password)) {
+      // Obtener información del usuario
       this[USER] = this[AUTH].getUser(username);
+      // Abrir sesión para el usuario
+
       this.onOpenSession();
     } else {
+      // Mostrar mensaje de usuario no válido si las credenciales son incorrectas
       this[VIEW].showInvalidUserMessage();
     }
+    // Si se selecciona la opción de recordar usuario, establecer la cookie del usuario
     if (remember) {
       this[VIEW].setUserCookie(this[USER]);
     }
   };
 
+  // Manejador para cerrar sesión
   handleCloseSession = () => {
+    // Cerrar sesión
     this.onCloseSession();
+    // Inicializar la aplicación
     this.onInit();
+    // Inicializar el historial del navegador
     this[VIEW].initHistory();
+  };
+
+  generarBackup = () => {
+    // Crear un objeto para almacenar los datos de la aplicacion
+    const data = {
+      categories: [],
+      dishes: [],
+      allergens: [],
+      menus: [],
+      restaurants: [],
+    };
+
+    // Recorrer las categorias y añadir al objeto de datos
+    for (let i = 0; i < this[MODEL].categories.length; i++) {
+      const category = this[MODEL].categories[i];
+      data.categories.push({
+        name: category.name,
+        description: category.description,
+        imagen: category.imagen,
+      });
+    }
+
+    // Recorrer los platos y añadir al objeto de datos
+    for (let i = 0; i < this[MODEL].dishes.length; i++) {
+      const dish = this[MODEL].dishes[i];
+      console.log(dish);
+      const dishData = {
+        name: dish.dish.name,
+        description: dish.dish.description,
+        ingredients: dish.dish.ingredients,
+        image: dish.image,
+      };
+      // for (let j = 0; j < dish.dish.ingredients.length; j++) {
+      //   dishData.ingredients.push(dish.dish.ingredients[j]);
+      // }
+      data.dishes.push(dishData);
+    }
+
+    // Recorrer los alergenos y añadir al objeto de datos
+    for (let i = 0; i < this[MODEL].allergens.length; i++) {
+      const allergen = this[MODEL].allergens[i];
+      data.allergens.push({ name: allergen.name });
+    }
+
+    // Recorrer los menus y añadir al objeto de datos
+    for (let i = 0; i < this[MODEL].menus.length; i++) {
+      const menu = this[MODEL].menus[i];
+      data.menus.push({ name: menu.menu.name });
+    }
+
+    // Recorrer los restaurantes y añadir al objeto de datos
+    for (let i = 0; i < this[MODEL].restaurants.length; i++) {
+      const restaurant = this[MODEL].restaurants[i];
+      const restaurantData = {
+        name: restaurant.name,
+        description: restaurant.description,
+        coordinates: {
+          latitude: restaurant.location.latitude,
+          longitude: restaurant.location.longitude,
+        },
+        image: restaurant.image,
+      };
+      data.restaurants.push(restaurantData);
+    }
+
+    // Generar el nombre del archivo de copia de seguridad con la fecha actual
+    const currentDate = new Date();
+    const fileName = `Backup_${currentDate.getFullYear()}_${
+      currentDate.getMonth() + 1
+    }_${currentDate.getDate()}.json`;
+
+    // Convertir los datos a JSON
+    const jsonData = JSON.stringify(data);
+
+    // Crear un objeto FormData
+    const formData = new FormData();
+    formData.append("fileName", fileName);
+    formData.append("json", jsonData);
+
+    // Realizar la solicitud fetch para guardar el archivo de copia de seguridad en el servidor
+    fetch("backup.php", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          console.error("Fallo en el Backup");
+        } else {
+          console.log("Backup creado");
+        }
+      })
+      .catch((error) => {
+        console.error("Error al generar el backup:", error);
+      });
   };
 }
 

@@ -17,6 +17,7 @@ class ManagerView {
     this.centro = document.getElementById("centro");
     this.menuses = document.querySelector(".nav_ul");
     this.dishFileWindow = new Array();
+    this.dishFileWindows = {};
   }
   [EXCECUTE_HANDLER](
     handler,
@@ -513,82 +514,82 @@ class ManagerView {
     // Desplazamos la vista de la ventana de ficha de plato para que el contenido sea visible
     fileDishWindow.document.body.scrollIntoView();
   }
+
+  // Método para mostrar la ficha de un plato
   showDish(dish, handler) {
+    // Seleccionar todos los botones de la clase "push-botom"
     const pushButtons = document.querySelectorAll(".push-botom");
 
-    // Agregamos el evento de clic a cada botón solo una vez
+    // Iterar sobre cada botón
     pushButtons.forEach((button) => {
-      if (!button.hasAttribute("data-clicked")) {
-        button.addEventListener("click", (event) => {
-          // Obtenemos el nombre del plato
-          const dishName = event.currentTarget.dataset.dish;
+      button.addEventListener("click", (event) => {
+        // Obtener el nombre del plato desde el atributo "data-dish" del botón clickeado
+        const dishName = event.currentTarget.dataset.dish;
 
-          // Buscamos si ya existe una ventana de ficha abierta para el plato actual
-          const exist = this.dishFileWindow.find(
-            (document) => document.title === dishName
+        // Verificar si ya hay una ventana de ficha abierta para este plato
+        if (
+          this.dishFileWindows[dishName] &&
+          !this.dishFileWindows[dishName].closed
+        ) {
+          // Si la ventana ya está abierta, enfocarla
+          this.dishFileWindows[dishName].focus();
+        } else {
+          // Si no existe o está cerrada, abrir una nueva ventana de ficha
+          const fileWindow = window.open(
+            "fichaDishes.html",
+            dishName,
+            "width=800, height=600, top=250, left=250, titlebar=yes, toolbar=no, menubar=no, location=no"
           );
 
-          // Verificamos si la ventana de ficha no existe o está cerrada
-          if (exist == null || exist.closed) {
-            // Si no existe o está cerrada, abrimos una nueva ventana de ficha
-            const fileWindow = window.open(
-              "fichaDishes.html",
-              dishName,
-              "width=800, height=600, top=250, left=250, titlebar=yes, toolbar=no, menubar=no, location=no"
-            );
+          // Registrar la nueva ventana de ficha en el objeto
+          this.dishFileWindows[dishName] = fileWindow;
 
-            // Agregamos la nueva ventana al arreglo de ventanas de fichas
-            this.dishFileWindow.push(fileWindow);
+          // Agregar un evento para cargar el contenido de la ventana de ficha
+          fileWindow.addEventListener("DOMContentLoaded", () => {
+            handler(dishName, fileWindow);
+          });
+        }
 
-            // Agregamos un evento para detectar cuando el contenido de la ventana de ficha se carga
-            fileWindow.addEventListener("DOMContentLoaded", () => {
-              // Ejecutamos el controlador pasando el nombre del plato y la ventana de ficha como argumentos
-              handler(dishName, fileWindow);
-            });
-          } else {
-            // Si la ventana de ficha ya está abierta, enfocamos esa ventana
-            exist.focus();
-
-            // Ejecutamos el controlador pasando el nombre del plato y la ventana de ficha existente como argumentos
-            handler(dishName, exist);
-          }
-
-          // Marcamos el botón como "clickeado" para evitar que se agregue otro evento de clic
-          button.setAttribute("data-clicked", true);
-
-          // Prevenimos el comportamiento predeterminado del enlace
-          event.preventDefault();
-        });
-      }
+        // Prevenir el comportamiento predeterminado del enlace
+        event.preventDefault();
+      });
     });
   }
-  //Muestra un enlace en la barra de navegación para cerrar todas las ventanas de fichas
+
+  // Método para mostrar un enlace en la barra de navegación para cerrar todas las ventanas de fichas
   showCloseFilesWindow() {
+    // Crear un elemento de lista
     const li = document.createElement("li");
     li.classList.add("nav_li");
+
+    // Insertar un enlace para cerrar todas las ventanas de fichas
     li.insertAdjacentHTML(
       "beforeend",
       `<a id="close" href="#">Cerrar Fichas</a>`
     );
+
+    // Agregar el elemento de lista al menú
     this.menuses.append(li);
   }
-  //Asignamos un evento de clic al enlace para cerrar todas las ventanas de fichas
+
+  // Método para asignar un evento de clic al enlace para cerrar todas las ventanas de fichas
   bindShowCloseFilesWindow(handler) {
     const closeWindow = document.getElementById("close");
+
+    // Agregar un evento de clic al enlace para cerrar todas las ventanas de fichas
     closeWindow.addEventListener("click", (event) => {
-      for (const window of this.dishFileWindow) {
-        window.close();
-      }
-      this.dishFileWindow = [];
-    });
-    // He añadido un evento que se dispara antes de que la página se recargue o se cierre
-    window.addEventListener("beforeunload", () => {
-      // Cerramos todas las ventanas de fichas antes de que la página se recargue o se cierre
-      this.dishFileWindow.forEach((window) => {
-        if (!window.closed) {
-          window.close();
+      // Cerrar todas las ventanas de fichas abiertas
+      for (const dishName in this.dishFileWindows) {
+        if (
+          this.dishFileWindows.hasOwnProperty(dishName) &&
+          !this.dishFileWindows[dishName].closed
+        ) {
+          this.dishFileWindows[dishName].close();
         }
-      });
+      }
+
+      // Restablecer el objeto dishFileWindows a un objeto vacío
+      this.dishFileWindows = {};
     });
   }
 
@@ -643,6 +644,10 @@ class ManagerView {
       "beforeend",
       '<li><a id="ldesasigCategory" class="dropdown-item" href="#desasig-category">Desasignar Categoria</a></li>'
     );
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="lbackup" class="dropdown-item" href="#generar-backup">Generar Objetos</a></li>'
+    );
     // Agregar las opciones al menú principal
     menuOption.append(suboptions);
     this.menuses.append(menuOption);
@@ -658,7 +663,8 @@ class ManagerView {
     hModifyMenuDesasig,
     hnewRestaurant,
     hAssingCategory,
-    hDesasigCategory
+    hDesasigCategory,
+    hBackup
   ) {
     // Obtener los elementos de las opciones del menú
     const newCategoryLink = document.getElementById("lnewCategory");
@@ -670,6 +676,7 @@ class ManagerView {
     const modifyMenuDesasigLink = document.getElementById("lmodifyMenuDesasig");
     const assingCategory = document.getElementById("lassingCategory");
     const desasigCategory = document.getElementById("ldesasigCategory");
+    const backup = document.getElementById("lbackup");
 
     // Agregar eventos a cada opción del menú
     newCategoryLink.addEventListener("click", (event) => {
@@ -781,6 +788,18 @@ class ManagerView {
         "#desasig_category",
         {
           action: "desasigCategory",
+        },
+        "#",
+        event
+      );
+    });
+    backup.addEventListener("click", (event) => {
+      this[EXCECUTE_HANDLER](
+        hBackup,
+        [],
+        "#generar-backup",
+        {
+          action: "generarBackup",
         },
         "#",
         event
@@ -1628,7 +1647,9 @@ class ManagerView {
     console.log("validaDesasig");
   }
 
+  // Método para mostrar un mensaje de cookies
   showCookiesMessage() {
+    // Plantilla de mensaje de cookies
     const toast = `<div class="fixed-top p-5 mt-5">
     <div id="cookies-message" class="toast fade show bg-dark text-white
     w-100 mw-100" role="alert" aria-live="assertive" aria-atomic="true">
@@ -1639,7 +1660,7 @@ class ManagerView {
     </div>
     <div class="toast-body p-4 d-flex flex-column">
     <p>
-    Este sitio web almacenda datos en cookies para activar su
+    Este sitio web almacena datos en cookies para activar su
     funcionalidad, entre las que se encuentra
     datos analíticos y personalización. Para poder utilizar este
     sitio, estás automáticamente aceptando
@@ -1659,50 +1680,74 @@ class ManagerView {
     </div>
     </div>
     </div>`;
+    // Inserta el mensaje de cookies en el cuerpo del documento
     document.body.insertAdjacentHTML("afterbegin", toast);
 
+    // Obtener el elemento del mensaje de cookies
     const cookiesMessage = document.getElementById("cookies-message");
+    // Escuchar el evento de ocultar el mensaje de cookies
     cookiesMessage.addEventListener("hidden.bs.toast", (event) => {
+      // Eliminar el mensaje de cookies cuando se oculta
       event.currentTarget.parentElement.remove();
     });
 
+    // Obtener el botón de aceptar cookies
     const btnAcceptCookie = document.getElementById("btnAcceptCookie");
+    // Escuchar el evento de hacer clic en el botón de aceptar cookies
     btnAcceptCookie.addEventListener("click", (event) => {
-      setCookie("accetedCookieMessage", "true", 1);
+      // Establecer una cookie indicando que el mensaje de cookies ha sido aceptado
+      setCookie("acceptedCookieMessage", "true", 1);
     });
 
+    // Función para denegar el uso de cookies
     const denyCookieFunction = (event) => {
+      // Eliminar contenido y elementos de la página
       this.main.replaceChildren();
       this.main.insertAdjacentHTML(
         "afterbegin",
         `<div class="container my3"><div class="alert alert-warning" role="alert">
       <strong>Para utilizar esta web es necesario aceptar el uso de
-      cookies. Debe recargar la página y aceptar las condicones para seguir
+      cookies. Debe recargar la página y aceptar las condiciones para seguir
       navegando. Gracias.</strong>
       </div></div>`
       );
       this.categories.remove();
       this.menu.remove();
     };
+
+    // Obtener el botón de denegar cookies
     const btnDenyCookie = document.getElementById("btnDenyCookie");
+    // Escuchar el evento de hacer clic en el botón de denegar cookies
     btnDenyCookie.addEventListener("click", denyCookieFunction);
+    // Obtener el botón de cerrar el mensaje de cookies
     const btnDismissCookie = document.getElementById("btnDismissCookie");
+    // Escuchar el evento de hacer clic en el botón de cerrar el mensaje de cookies
     btnDismissCookie.addEventListener("click", denyCookieFunction);
   }
+
+  // Método para mostrar un enlace de identificación
   showIdentificationLink() {
+    // Obtener el área de usuario
     const userArea = document.getElementById("userArea");
+    // Limpiar el área de usuario
     userArea.replaceChildren();
+    // Insertar el enlace de identificación en el área de usuario
     userArea.insertAdjacentHTML(
       "afterbegin",
       `<div class="account d-flex
-    mx-2 flex-column" style="text-align: right; height: 40px">
-    <a id="login" href="#"><i class="bi bi-person-circle" ariahidden="true"></i> Identificate</a>
-    </div>`
+  mx-2 flex-column" style="text-align: right; height: 40px">
+  <a id="login" href="#"><i class="bi bi-person-circle" aria-hidden="true"></i> Identifícate</a>
+  </div>`
     );
   }
+
+  // Método para enlazar la funcionalidad de identificación
   bindIdentificationLink(handler) {
+    // Obtener el enlace de identificación
     const login = document.getElementById("login");
+    // Escuchar el evento de hacer clic en el enlace de identificación
     login.addEventListener("click", (event) => {
+      // Ejecutar el controlador proporcionado con los argumentos adecuados
       this[EXCECUTE_HANDLER](
         handler,
         [],
@@ -1713,8 +1758,12 @@ class ManagerView {
       );
     });
   }
+
+  // Método para mostrar el formulario de inicio de sesión
   showLogin() {
+    // Limpiar el área central
     this.centro.replaceChildren();
+    // Plantilla de formulario de inicio de sesión
     const login = `<div class="container h-100">
     <div class="d-flex justify-content-center h-100">
     <div class="user_card">
@@ -1722,23 +1771,23 @@ class ManagerView {
     <form name="fLogin" role="form" novalidate>
     <div class="input-group mb-3">
     <div class="input-group-append">
-    <span class="input-group-text"><i class="bi bi-personcircle"></i></span>
+    <span class="input-group-text"><i class="bi bi-person-circle"></i></span>
     </div>
     <input type="text" name="username" class="form-control
-    input_user" value="" placeholder="usuario">
+    input_user" value="" placeholder="Usuario">
     </div>
     <div class="input-group mb-2">
     <div class="input-group-append">
-    <span class="input-group-text"><i class="bi bi-keyfill"></i></span>
+    <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
     </div>
     <input type="password" name="password" class="form-control
-    input_pass" value="" placeholder="contraseña">
+    input_pass" value="" placeholder="Contraseña">
     </div>
     <div class="form-group">
     <div class="custom-control custom-checkbox">
-    <input name="remember" type="checkbox" class="customcontrol-input" id="customControlInline">
+    <input name="remember" type="checkbox" class="custom-control-input" id="customControlInline">
     <label class="custom-control-label"
-    for="customControlInline">Recuerdame</label>
+    for="customControlInline">Recuérdame</label>
     </div>
     </div>
     <div class="d-flex justify-content-center mt-3
@@ -1751,67 +1800,93 @@ class ManagerView {
     </div>
     </div>
     </div>`;
+    // Insertar el formulario de inicio de sesión en el área central
     this.centro.insertAdjacentHTML("afterbegin", login);
   }
 
+  // Método para enlazar la funcionalidad de inicio de sesión
   bindLogin(handler) {
+    // Obtener el formulario de inicio de sesión
     const form = document.forms.fLogin;
+    // Escuchar el evento de enviar el formulario
     form.addEventListener("submit", (event) => {
+      // Ejecutar el controlador proporcionado con los datos del formulario
       handler(form.username.value, form.password.value, form.remember.checked);
+      // Prevenir el comportamiento predeterminado de envío del formulario
       event.preventDefault();
     });
   }
 
+  // Método para mostrar un mensaje de usuario no válido
   showInvalidUserMessage() {
+    // Insertar un mensaje de usuario no válido en el área central
     this.centro.insertAdjacentHTML(
       "beforeend",
       `<div class="container my3"><div class="alert alert-warning" role="alert">
-    <strong>El usuario y la contraseña no son válidos. Inténtelo
-    nuevamente.</strong>
-    </div></div>`
+  <strong>El usuario y la contraseña no son válidos. Inténtelo
+  nuevamente.</strong>
+  </div></div>`
     );
+    // Restablecer el formulario de inicio de sesión y enfocar el campo de usuario
     document.forms.fLogin.reset();
     document.forms.fLogin.username.focus();
   }
 
+  // Método para inicializar el historial del navegador
   initHistory() {
+    // Reemplazar el estado actual del historial con un nuevo estado inicial
     history.replaceState({ action: "init" }, null);
   }
 
+  // Método para mostrar el perfil de usuario autenticado
   showAuthUserProfile(user) {
+    // Obtener el área de usuario
     const userArea = document.getElementById("userArea");
+    // Limpiar el área de usuario
     userArea.replaceChildren();
+    // Insertar el perfil de usuario autenticado en el área de usuario
     userArea.insertAdjacentHTML(
       "afterbegin",
       `<div class="d-flex justify-content-between mx-2">
-        <div class="account flex-grow-1">
-          ${user.username} <a id="aCloseSession" href="#">Cerrar sesión</a>
-        </div>
-        <div class="image">
-          <img alt="${user.username}" src="imagen/user.jpeg" />
-        </div>
-      </div>`
+      <div class="account flex-grow-1">
+        ${user.username} <a id="aCloseSession" href="#">Cerrar sesión</a>
+      </div>
+      <div class="image">
+        <img alt="${user.username}" src="imagen/user.jpeg" />
+      </div>
+    </div>`
     );
   }
 
+  // Método para establecer una cookie de usuario
   setUserCookie(user) {
+    // Establecer una cookie con el nombre de usuario activo
     setCookie("activeUser", user.username, 1);
   }
 
+  // Método para eliminar la cookie de usuario
   deleteUserCookie() {
+    // Eliminar la cookie de usuario activo
     setCookie("activeUser", "", 0);
   }
 
+  // Método para eliminar el menú de administrador
   removeAdminMenu() {
+    // Obtener el menú de administrador
     const adminMenu = document.getElementById("navServices");
+    // Si existe el menú de administrador, eliminar su elemento padre
     if (adminMenu) adminMenu.parentElement.remove();
   }
 
+  // Método para enlazar la funcionalidad de cerrar sesión
   bindCloseSession(handler) {
+    // Escuchar el evento de hacer clic en el enlace de cerrar sesión
     document
       .getElementById("aCloseSession")
       .addEventListener("click", (event) => {
+        // Ejecutar el controlador proporcionado
         handler();
+        // Prevenir el comportamiento predeterminado del enlace
         event.preventDefault();
       });
   }

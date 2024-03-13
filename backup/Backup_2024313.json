@@ -1,0 +1,106 @@
+{
+  "categories": [
+    { "name": "Primeros", "description": "Platos Frios" },
+    { "name": "Segundos", "description": "Platos Calientes" },
+    { "name": "Postres", "description": "Platos Dulces y Salados" }
+  ],
+  "dishes": [
+    {
+      "name": "Ensaladilla de Coliflor",
+      "description": "Plato sencillo y fresco que se prepara con ingredientes caseros y que te va a encantar si eres amante de la verdura",
+      "ingredients": [
+        "coliflor",
+        "atun",
+        "huevo duro",
+        "mayonesa",
+        "cebolla fresca"
+      ]
+    },
+    {
+      "name": "Ensaladilla Pulpo",
+      "description": "Ensaladilla de pulpo con un toque ‘a la gallega’",
+      "ingredients": [
+        "pulpo",
+        "mayonesa",
+        "pimiento rojo",
+        "cebolla",
+        "patatas"
+      ]
+    },
+    {
+      "name": "Ensalada de Arroz",
+      "description": "Ensalada de arroz y verduritas se puede preparar con verduras de temporada, un plato fresco y sencillo",
+      "ingredients": ["arroz", "verduras variadas", "ajo", "zumo de lima"]
+    },
+    {
+      "name": "Ensalada de Pasta al Pesto",
+      "description": "Esta ensalada de patatas al pesto es fresca y natural. El pesto casero tiene más frescura y sabor."
+    },
+    {
+      "name": "Paletilla de Cabrito",
+      "description": "Esta receta es la mezcla perfecta entre modernidad y clasicismo, ¡atrévete!",
+      "ingredients": [
+        "cabrito",
+        "sal y pimienta",
+        "caldo de cocido",
+        "mantequilla"
+      ]
+    },
+    {
+      "name": "Tartar de Salmon",
+      "description": "Necesitas que un plato sea caliente para que sea espectacular como este tartar",
+      "ingredients": ["salmon", "rabanitos", "lima", "kimchi", "cebolleta"]
+    },
+    {
+      "name": "Lomo de Cerdo",
+      "description": "Lomo de cerdo en escabeche de especias, receta ideal para el verano",
+      "ingredients": ["lomo", "ajo", "vinagre", "anis", "canela"]
+    },
+    {
+      "name": "Tarta de Queso",
+      "description": "La tarta de queso es uno de los postres que más alegrías nos dan",
+      "ingredients": ["huevos", "queso", "vainila", "harina"]
+    },
+    {
+      "name": "Tarta 3 Chocolates",
+      "description": "Con un trozo de esta tendrás suficiente",
+      "ingredients": ["galleta", "chocolate tres tipos", "leche"]
+    },
+    {
+      "name": "Coulants de Chocolate",
+      "description": "El contraste del frío y calor está presente en este postre"
+    },
+    {
+      "name": "Brazo de Gitano",
+      "description": "Este brazo si que se puede comer"
+    }
+  ],
+  "allergens": [
+    { "name": "Pimiento" },
+    { "name": "Frutos" },
+    { "name": "Lacteos" },
+    { "name": "Pescado" }
+  ],
+  "menus": [
+    { "name": "Menú Infinito" },
+    { "name": "Menú Especial" },
+    { "name": "Menú Estrella" }
+  ],
+  "restaurants": [
+    {
+      "name": "Lioko",
+      "description": "Los mejores platos tradicionales",
+      "coordinates": { "latitude": "-0.1257400", "longitude": "51.5085300" }
+    },
+    {
+      "name": "Codigo II",
+      "description": "Preparate para lo mas innovador",
+      "coordinates": { "latitude": "41.38879", "longitude": "2.15899" }
+    },
+    {
+      "name": "La Antigua",
+      "description": "Restaurante 3 Estrellas Michelin",
+      "coordinates": { "latitude": "2.3486000", "longitude": "48.8534000" }
+    }
+  ]
+}

@@ -23,65 +23,79 @@ function defaultCheckElement(event) {
     showFeedBack(this, true);
   }
 }
-
 function newCategoryValidation(handler) {
-  // Obtiene el formulario de nueva categoría
+  // Obtener el formulario de nueva categoría
   const form = document.forms.fNewCategory;
+  // Establecer el atributo 'novalidate' para deshabilitar la validación automática del navegador
   form.setAttribute("novalidate", true);
 
-  // Agrega un evento de escucha para la presentación del formulario
+  // Agregar un evento de escucha para la presentación del formulario
   form.addEventListener("submit", function (event) {
+    // Inicializar variables para validar el formulario
     let isValid = true;
     let firstInvalidElement = null;
 
     // Validación de campos
+    // Trim elimina los espacios en blanco al inicio y al final del valor del campo
     this.ncDescription.value = this.ncDescription.value.trim();
+    // Mostrar retroalimentación (feedback) en el campo de descripción
     showFeedBack(this.ncDescription, true);
 
+    // Validar el campo de URL
     if (!this.ncUrl.checkValidity()) {
       isValid = false;
+      // Mostrar retroalimentación (feedback) en el campo de URL si es inválido
       showFeedBack(this.ncUrl, false);
+      // Asignar el primer elemento inválido
       firstInvalidElement = this.ncUrl;
     } else {
-      showFeedBack(this.ncUrl, true);
+      showFeedBack(this.ncUrl, true); // Mostrar retroalimentación (feedback) en el campo de URL si es válido
     }
 
+    // Validar el campo de título
     if (!this.ncTitle.checkValidity()) {
       isValid = false;
+      // Mostrar retroalimentación (feedback) en el campo de título si es inválido
       showFeedBack(this.ncTitle, false);
+      // Asignar el primer elemento inválido
       firstInvalidElement = this.ncTitle;
     } else {
-      showFeedBack(this.ncTitle, true);
+      showFeedBack(this.ncTitle, true); // Mostrar retroalimentación (feedback) en el campo de título si es válido
     }
 
-    // Enfoque en el primer elemento no válido
+    // Enfocar en el primer elemento no válido
     if (!isValid) {
       firstInvalidElement.focus();
     } else {
-      // Ejecuta el controlador con los datos del formulario
+      // Ejecutar el controlador con los datos del formulario
       handler(this.ncTitle.value, this.ncUrl.value, this.ncDescription.value);
     }
 
+    // Prevenir el envío del formulario
     event.preventDefault();
     event.stopPropagation();
   });
 
-  // Restablece el formulario al estado predeterminado
+  // Restablecer el formulario al estado predeterminado
   form.addEventListener("reset", function (event) {
+    // Ocultar retroalimentación (feedback) de validación
     for (const div of this.querySelectorAll(
       "div.valid-feedback,div.invalid-feedback"
     )) {
       div.classList.remove("d-block");
       div.classList.add("d-none");
     }
+    // Eliminar clases de validación de los campos de entrada
     for (const input of this.querySelectorAll("input")) {
       input.classList.remove("is-valid");
       input.classList.remove("is-invalid");
     }
+    // Enfocar en el campo de título
     this.ncTitle.focus();
   });
 
-  // Agrega validación al cambio de los elementos del formulario
+  // Agregar validación al cambio de los elementos del formulario
+  // Estos eventos ejecutarán la función 'defaultCheckElement' cuando los campos cambien
   form.ncTitle.addEventListener("change", defaultCheckElement);
   form.ncUrl.addEventListener("change", defaultCheckElement);
 }
